@@ -95,6 +95,10 @@ class PessoaCl {
   get idade() {
     return 2037 - this.anoNasc;
   }
+
+  static hey() {
+    console.log("Olá 😘");
+  }
 }
 
 const jessica = new PessoaCl("Jessica", 1996);
@@ -125,3 +129,32 @@ console.log(conta.recente);
 
 conta.recente = 50;
 console.log(conta.transacoes);
+
+// Métodos estáticos
+Pessoa.hey = function () {
+  console.log("Olá 😘");
+};
+
+Pessoa.hey();
+
+// Object create
+const PessoaProto = {
+  calcIdade() {
+    console.log(2037 - this.anoNasc);
+  },
+
+  init(primeiroNome, anoNasc) {
+    this.primeiroNome = primeiroNome;
+    this.anoNasc = anoNasc;
+  },
+};
+
+const steven = Object.create(PessoaProto);
+steven.nome = "Steven";
+steven.anoNasc = 2002;
+
+steven.calcIdade();
+
+const sarah = Object.create(PessoaProto);
+sarah.init("Sarah", 2010);
+sarah.calcIdade();
