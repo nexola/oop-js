@@ -1,36 +1,5 @@
 "use strict";
 
-class Pessoa {
-  constructor(primeiroNome, sobrenome, anoNasc) {
-    // Instance properties
-    this.primeiroNome = primeiroNome;
-    this.sobrenome = sobrenome;
-    this.anoNasc = anoNasc;
-  }
-}
-
-const vitor = new Pessoa("Vitor", "Vianna", 1999);
-
-console.log(vitor);
-console.log(vitor instanceof Pessoa);
-
-// Prototypes
-Pessoa.prototype.printNome = function () {
-  console.log(this.primeiroNome + " " + this.sobrenome);
-};
-
-vitor.printNome();
-
-// .prototypeOfLinkedObjects
-
-Pessoa.prototype.especie = "Homo Sapiens";
-
-console.log(vitor);
-console.log(vitor.hasOwnProperty("primeiroNome"));
-console.log(vitor.hasOwnProperty("especie"));
-
-console.log(vitor.__proto__.__proto__);
-
 Array.prototype.unique = function () {
   return [...new Set(this)];
 };
@@ -54,12 +23,10 @@ const kmFormat = function (velocidade) {
     maximumFractionDigits: 0,
   }).format(velocidade);
 };
-class Car {
-  constructor(marca, velocidade) {
-    this.marca = marca;
-    this.velocidade = velocidade;
-  }
-}
+const Car = function (marca, velocidade) {
+  this.marca = marca;
+  this.velocidade = velocidade;
+};
 
 Car.prototype.acelerar = function () {
   this.velocidade += 10;
@@ -131,11 +98,6 @@ conta.recente = 50;
 console.log(conta.transacoes);
 
 // Métodos estáticos
-Pessoa.hey = function () {
-  console.log("Olá 😘");
-};
-
-Pessoa.hey();
 
 // Object create
 const PessoaProto = {
@@ -158,3 +120,91 @@ steven.calcIdade();
 const sarah = Object.create(PessoaProto);
 sarah.init("Sarah", 2010);
 sarah.calcIdade();
+
+// CODE CHALLENGE 02
+class Car2 {
+  constructor(marca, velocidade) {
+    this.marca = marca;
+    this.velocidade = velocidade;
+  }
+
+  acelerar() {
+    this.velocidade += 10;
+    console.log(kmFormat(this.velocidade));
+  }
+
+  frear() {
+    this.velocidade -= 5;
+    console.log(kmFormat(this.velocidade));
+  }
+
+  get speedUS() {
+    return this.velocidade / 1.6;
+  }
+
+  set speedUS(velocidade) {
+    this.velocidade = velocidade * 1.6;
+  }
+}
+
+const fiesta = new Car2("Ford", 120);
+
+console.log(fiesta.speedUS);
+fiesta.speedUS = 50;
+console.log(fiesta.speedUS);
+
+// Herança entre classes
+const Pessoa = function (primeiroNome, anoNasc) {
+  this.primeiroNome = primeiroNome;
+  this.anoNasc = anoNasc;
+};
+
+Pessoa.prototype.calcIdade = function () {
+  return 2037 - this.anoNasc;
+};
+
+const Estudante = function (primeiroNome, anoNasc, curso) {
+  Pessoa.call(this, primeiroNome, anoNasc);
+  this.curso = curso;
+};
+
+Estudante.prototype = Object.create(Pessoa.prototype);
+
+Estudante.prototype.introduce = function () {
+  console.log(`Meu nome é ${this.primeiroNome} e estudo ${this.curso}`);
+};
+
+const mike = new Estudante("Mike", 2020, "Ciencia da computação");
+mike.introduce();
+console.log(mike.calcIdade());
+
+Estudante.prototype.constructor = Estudante;
+
+console.log(mike.__proto__.__proto__);
+
+const EV = function (marca, velocidade, carga) {
+  Car.call(this, marca, velocidade);
+  this.carga = carga;
+};
+
+EV.prototype = Object.create(Car.prototype);
+
+EV.prototype.chargeBattery = function (chargeTo) {
+  this.carga = chargeTo;
+};
+
+EV.prototype.acelerar = function () {
+  this.velocidade += 20;
+  this.carga -= 1;
+  console.log(
+    `${this.marca} is going at ${this.velocidade} km/h with a charge of ${this.carga}%`
+  );
+};
+
+EV.prototype.constructor = EV;
+
+const tesla = new EV("Tesla", 120, 23);
+
+tesla.frear();
+tesla.chargeBattery(35);
+tesla.acelerar();
