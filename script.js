@@ -163,24 +163,24 @@ Pessoa.prototype.calcIdade = function () {
   return 2037 - this.anoNasc;
 };
 
-const Estudante = function (primeiroNome, anoNasc, curso) {
-  Pessoa.call(this, primeiroNome, anoNasc);
-  this.curso = curso;
-};
+// const Estudante = function (primeiroNome, anoNasc, curso) {
+//   Pessoa.call(this, primeiroNome, anoNasc);
+//   this.curso = curso;
+// };
 
-Estudante.prototype = Object.create(Pessoa.prototype);
+// Estudante.prototype = Object.create(Pessoa.prototype);
 
-Estudante.prototype.introduce = function () {
-  console.log(`Meu nome é ${this.primeiroNome} e estudo ${this.curso}`);
-};
+// Estudante.prototype.introduce = function () {
+//   console.log(`Meu nome é ${this.primeiroNome} e estudo ${this.curso}`);
+// };
 
-const mike = new Estudante("Mike", 2020, "Ciencia da computação");
-mike.introduce();
-console.log(mike.calcIdade());
+// const mike = new Estudante("Mike", 2020, "Ciencia da computação");
+// mike.introduce();
+// console.log(mike.calcIdade());
 
-Estudante.prototype.constructor = Estudante;
+// Estudante.prototype.constructor = Estudante;
 
-console.log(mike.__proto__.__proto__);
+// console.log(mike.__proto__.__proto__);
 
 const EV = function (marca, velocidade, carga) {
   Car.call(this, marca, velocidade);
@@ -208,3 +208,98 @@ const tesla = new EV("Tesla", 120, 23);
 tesla.frear();
 tesla.chargeBattery(35);
 tesla.acelerar();
+
+// ES6 Herança
+class Estudante extends PessoaCl {
+  constructor(primeiroNome, anoNasc, curso) {
+    super(primeiroNome, anoNasc);
+    this.curso = curso;
+  }
+
+  introduce() {
+    console.log(`Meu nome é ${this.primeiroNome} e estudo ${this.curso}`);
+  }
+}
+
+const martha = new Estudante("Martha", 2020, "ADS");
+
+martha.introduce();
+
+const PessoaProt = {
+  calcIdade() {
+    console.log(2037 - this.idade);
+  },
+
+  init(primeiroNome, anoNasc) {
+    this.primeiroNome = primeiroNome;
+    this.anoNasc = anoNasc;
+  },
+};
+
+const mark = Object.create(PessoaProt);
+
+const EstudanteProt = Object.create(PessoaProt);
+EstudanteProt.init = function (primeiroNome, anoNasc, curso) {
+  PessoaProt.init.call(this, primeiroNome, anoNasc);
+  this.curso = curso;
+};
+
+const jay = Object.create(EstudanteProt);
+
+// Encapsulamento
+class Account {
+  // Public fields (instances)
+  locale = navigator.language;
+
+  // Private fields
+  #movements = [];
+  #pin;
+
+  constructor(owner, currency, pin) {
+    this.owner = owner;
+    this.currency = currency;
+    this.#pin = pin;
+
+    console.log(`Thanks for opening an account, ${owner}`);
+  }
+
+  // Public methods
+  getMovements() {
+    return this.#movements;
+  }
+
+  deposit(value) {
+    this.#movements.push(value);
+    this.total = this.#movements.reduce((acc, x) => acc + x, 0);
+  }
+
+  withdraw(value) {
+    this.deposit(-value);
+  }
+
+  requestLoan(value) {
+    if (this.#approveLoan(value)) {
+      this.deposit(value);
+      console.log(`Loan approved`);
+    }
+  }
+
+  // Private methods
+  #approveLoan(value) {
+    return true;
+  }
+
+  static helper() {
+    console.log("Helper");
+  }
+}
+
+const acc1 = new Account("Jonas", "EUR", 1111);
+console.log(acc1);
+
+acc1.deposit(250);
+acc1.withdraw(140);
+acc1.requestLoan(1000);
+console.log(acc1.getMovements());
+
+Account.helper();
