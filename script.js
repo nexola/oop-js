@@ -271,16 +271,19 @@ class Account {
   deposit(value) {
     this.#movements.push(value);
     this.total = this.#movements.reduce((acc, x) => acc + x, 0);
+    return this;
   }
 
   withdraw(value) {
     this.deposit(-value);
+    return this;
   }
 
   requestLoan(value) {
     if (this.#approveLoan(value)) {
       this.deposit(value);
       console.log(`Loan approved`);
+      return this;
     }
   }
 
@@ -303,3 +306,56 @@ acc1.requestLoan(1000);
 console.log(acc1.getMovements());
 
 Account.helper();
+
+// Chaining -> return this;
+acc1.deposit(300).deposit(500).withdraw(35).requestLoan(25000).withdraw(4000);
+
+// CODE CHALLENGE
+class CarCl {
+  constructor(marca, velocidade) {
+    this.marca = marca;
+    this.velocidade = velocidade;
+  }
+
+  acelerar() {
+    this.velocidade += 10;
+    console.log(`${this.marca} indo a ${this.velocidade} Km/H`);
+    return this;
+  }
+
+  frear() {
+    this.velocidade -= 5;
+    console.log(`${this.marca} indo a ${this.velocidade} Km/H`);
+    return this;
+  }
+}
+
+class EVCl extends CarCl {
+  #carga;
+
+  constructor(marca, velocidade, carga) {
+    super(marca, velocidade);
+    this.#carga = carga;
+  }
+
+  chargeBattery(carregarAte) {
+    this.#carga = carregarAte;
+    return this;
+  }
+
+  acelerar() {
+    this.velocidade += 20;
+    this.#carga -= 1;
+    console.log(
+      `${this.marca} indo a ${this.velocidade} Km/H com carga de ${
+        this.#carga
+      }%`
+    );
+
+    return this;
+  }
+}
+
+const rivian = new EVCl("Rivian", 120, 23);
+
+rivian.chargeBattery(42).acelerar().frear().acelerar();
